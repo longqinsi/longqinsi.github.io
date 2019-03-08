@@ -4,7 +4,6 @@
   1. [如何递归获取指定目录下的所有子目录和文件？](#recursively-ls)
 
 ## 问题
-
 * ss
 * ss
 * ss
@@ -33,12 +32,7 @@
 * ss
 * ss
 * ss
-* ss
-* ss
-* ss
-* ss
-
-### 1.如何递归获取指定目录下的所有子目录和文件？<a name="recursively-ls"></a>
+### 1.如何递归获取指定目录下的所有子目录和文件？<a name="recursively-ls"></a><a href="#top">Top</a>
 
   用Files.walk方法获取子目录和文件的遍历流然后用forEach处理单个子目录/文件
 ```java

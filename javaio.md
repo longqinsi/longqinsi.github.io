@@ -32,14 +32,15 @@
 * ss
 * ss
 * ss
-### 1.如何递归获取指定目录下的所有子目录和文件？<a name="recursively-ls"></a>[:tophat:](#top)
+### 1.如何递归获取指定目录下的所有子目录和文件？<a name="recursively-ls"></a>[↑](#top)
 
   用Files.walk方法获取子目录和文件的遍历流然后用forEach处理单个子目录/文件
 ```java
 Files.walk(Paths.get(".")).forEach(System.out::println);
 ```
   代码的输出如下：
-```
+
+```bash
 .
 ./files
 ./src

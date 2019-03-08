@@ -2,6 +2,8 @@
 ## 目录
   1. [如何向一个GZip文件写入数据？](#write-to-gzip)
   2. [如何从一个GZip文件读取数据？](#read-from-gzip)
+
+
 ## 问题
 ### 1.如何向一个GZip文件写入数据？<a name="write-to-gzip"></a>[↑](#top)
 下面的代码在files目录中创建gzip格式的压缩文件file.bin.gz，并把从1到100的

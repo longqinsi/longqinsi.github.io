@@ -2,7 +2,7 @@
 
 ## 目录
   1. [如何递归获取指定目录下的所有子目录和文件？](#recursively-ls)
-
+  1. [如何用工厂模式创建BufferedWritter？](#create-buffered-writer)
 ## 问题
 ### 1.如何递归获取指定目录下的所有子目录和文件？<a name="recursively-ls"></a>[↑](#top)
 
@@ -19,4 +19,11 @@ Files.walk(Paths.get(".")).forEach(System.out::println);
 ./src/org/paumard
 ./src/org/paumard/io
 ./src/org/paumard/io/WritingCharacters.java
+```
+### 1.如何用工厂模式创建BufferedWritter？<a name="create-buffered-writer"></a>[↑](#top)
+
+调用Files.newBufferedWriter方法
+```java
+Path path = Paths.get("files/data.txt");
+Files.newBufferedWriter(path);
 ```

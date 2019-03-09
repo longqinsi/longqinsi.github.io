@@ -77,3 +77,110 @@ public class Person implements Serializable {
 	private transient Address address;
 }
 ```
+### 5.有哪几种方法可以覆盖JVM的默认序列化机制？
+方法1：提供一对writeObject()/readObject()方法
+```java
+public class Person implements Serializable {
+	private static final long serialVersionUID = -2654901401681242080L;
+	private String name;
+	private int age;
+	public Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	private void writeObject(ObjectOutputStream oos) throws Exception {
+		oos.writeUTF(name);
+		oos.writeInt(age);
+	}
+
+	private void readObject(ObjectInputStream ois) throws Exception {
+		this.name = ois.readUTF();
+		this.age = ois.readInt();
+	}
+
+	public String getName() { return name; }
+	public int getAge() { return age; }
+}
+```
+**备注：如果类Employee是Person的子类，在序列化/反序列化Employee的对象时，Employee和Person的readObject/writeObject方法都会被调用，Employee类的readObject/writeObject方法只需要负责它本身定义的字段（例如salary工资）的序列化/反序列化。
+**
+
+方法2：实现Externalizable接口
+Externalizable接口的定义如下：
+```java
+public interface Externalizable {
+
+  void writeExternal(ObjectOutput out) throws IOException;
+
+  void readExternal(ObjectInput in) throws IOException, ClassNotFoundException;
+}
+```
+和第一种方法的不同是，writeExternal不仅要序列自身的字段，还需要序列化基类字段（如果有基类）。
+使用场景：发送方只序列化对象的主键，而不序列化其状态；接收方通过对象的类和主键重建其状态（状态可能保存在数据库中）。
+
+
+方法3：使用代理类进行序列化/反序列化
+需要序列化的类通过writeReplace方法返回一个代理类对象。代理类必须提供readResolve方法，返回被序列化的类的对象。
+
+需要序列化的类：
+```java
+public class Person implements Serializable {
+
+	private static final long serialVersionUID = -2654901401681242080L;
+
+	private String name;
+
+	private int age;
+
+	public Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	private Object writeReplace() throws ObjectStreamException{
+		return new PersonProxy(name + "::" + age);
+	}
+
+	public String getName() { return name; }
+	public int getAge() { return age; }
+}
+```
+代理类：
+```java
+public class PersonProxy implements Serializable {
+
+	private static final long serialVersionUID = 1695295410281921902L;
+
+	private String name;
+
+	public PersonProxy() {
+	}
+	
+	private Object readResolve() throws ObjectStreamException {
+		
+		String[] strings = this.name.split("::");
+		String name = strings[0];
+		int age = Integer.parseInt(strings[1]);
+		
+		return new Person(name, age);
+	}
+
+	public PersonProxy(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "PersonProxy [name=" + name + "]";
+	}
+}
+```

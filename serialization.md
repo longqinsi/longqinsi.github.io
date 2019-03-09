@@ -40,7 +40,10 @@ try(var ois = new ObjectInputStream(Files.newInputStream(
   var person2 = (Person)ois.readObject();
   System.out.printf("name: %s, age: %d", person.getName(),    erson2.getAge());
 }
-
+```
+其输出如下：
+```
+name: 张三, age: 20
 ```
 ### 3.如何使Intellij IDEA为标记了Serializable的类自动生成serialVersionUID字段？<a name="idea-serial-version-uid"></a>[↑](#top)
 Go to menu File → Settings → Editor → Inspections → Java → Serialization issues → Serializable class without 'serialVersionUID'` enabled, the class you provide will give me warnings.

@@ -116,12 +116,26 @@ public interface Externalizable {
   void readExternal(ObjectInput in) throws IOException, ClassNotFoundException;
 }
 ```
-和第一种方法的不同是，writeExternal不仅要序列自身的字段，还需要序列化基类字段（如果有基类）。
+和第一种方法的不同是：
+
+1）writeExternal/readExternal不仅要序列化/反序列化自身的字段，还需要序列化/反序列化基类字段（如果有基类）。
+
+2）writeExternal/readExternal方法是公开(public)的，而writeObject/readObject方法是私有(private)的。
+
 使用场景：发送方只序列化对象的主键，而不序列化其状态；接收方通过对象的类和主键重建其状态（状态可能保存在数据库中）。
 
 
 方法3：使用代理类进行序列化/反序列化
-需要序列化的类通过writeReplace方法返回一个代理类对象。代理类必须提供readResolve方法，返回被序列化的类的对象。
+
+1)在需要序列化的类A提供一个 **私有(private)** 的writeReplace方法，返回一个代理类B的对象。
+
+2)在代理类B中通过一个 **私有(private)** 的readResolve方法返回类A的对象。
+
+在序列化流中存储的是代理类B的对象，但这对于调用方是透明的。
+
+使用场景：
+It has serveral uses. One of them is to handle legacy applications.
+用于序列化可序列化类的不同版本。Supposed that on a disk you have a collections of file with all versions of all the classes. You can just add this readResolve method in these old classes to provide new objects to your application. 
 
 需要序列化的类：
 ```java

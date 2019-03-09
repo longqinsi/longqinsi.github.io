@@ -85,7 +85,7 @@ try(ZipOutputStream zos = new ZipOutputStream(
 }
 ```
 ### 5.如何从zip文件读取数据？<a name="read-from-zip"></a>[↑](#top)
-下面的代码从问题4中创建的zip文件中读取目录和文件，并打印其名称。对于文件，还要读读取其中包含的32位整数。
+下面的代码从问题4中创建的zip文件中读取目录和文件，并打印其名称。对于文件，还要读取其中包含的32位整数。
 ```java
 try(ZipInputStream zis = new ZipInputStream(
         Files.newInputStream(

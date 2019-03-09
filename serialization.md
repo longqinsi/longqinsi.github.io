@@ -3,7 +3,8 @@
   1. [如何序列化对象？](#serialize-object)
   2. [如何通过反序列化创建对象？](#create-object-by-deserialization)
   3. [如何使Intellij IDEA为标记了Serializable的类自动生成serialVersionUID字段？](#idea-serial-version-uid)
-  4. [如何使某个字段不被序列化？](#exclude-field)  
+  4. [如何使某个字段不被序列化？](#exclude-field) 
+  5. [有哪几种方法可以覆盖JVM的默认序列化机制？](#override-default-mechanism)  
 
 ## 问题
 ### 1.如何序列化对象？<a name="serialize-object"></a>[↑](#top)
@@ -77,7 +78,7 @@ public class Person implements Serializable {
 	private transient Address address;
 }
 ```
-### 5.有哪几种方法可以覆盖JVM的默认序列化机制？
+### 5.有哪几种方法可以覆盖JVM的默认序列化机制？<a name="override-default-mechanism"></a>[↑](#top)
 方法1：提供一对writeObject()/readObject()方法
 ```java
 public class Person implements Serializable {

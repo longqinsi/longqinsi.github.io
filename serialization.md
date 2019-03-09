@@ -104,8 +104,7 @@ public class Person implements Serializable {
 	public int getAge() { return age; }
 }
 ```
-**备注：如果类Employee是Person的子类，在序列化/反序列化Employee的对象时，Employee和Person的readObject/writeObject方法都会被调用，Employee类的readObject/writeObject方法只需要负责它本身定义的字段（例如salary工资）的序列化/反序列化。
-**
+**备注：如果类Employee是Person的子类，在序列化/反序列化Employee的对象时，Employee和Person的readObject/writeObject方法都会被调用，Employee类的readObject/writeObject方法只需要负责它本身定义的字段（例如salary工资）的序列化/反序列化。**
 
 方法2：实现Externalizable接口
 Externalizable接口的定义如下：

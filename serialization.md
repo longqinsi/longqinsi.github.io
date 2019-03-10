@@ -80,24 +80,28 @@ public class Person implements Serializable {
 ```
 ### 5.有哪几种方法可以覆盖JVM的默认序列化机制？<a name="override-default-mechanism"></a>[↑](#top)
 方法1：提供一对writeObject()/readObject()方法
+下面的Person类在writeObject方法中用DataOutputStream类封装ObjectOutputStream，把name和age用"::"分隔后拼接为一个字符串序列化，并给name和age字段都加上了transient关键字，这样可以有效减少序列化后的文件大小。
+在readObject中对应地用DataInputStream封装ObjectInputStream进行读取。
 ```java
 public class Person implements Serializable {
 	private static final long serialVersionUID = -2654901401681242080L;
-	private String name;
-	private int age;
+	private transient String name;
+	private transient int age;
 	public Person(String name, int age) {
 		this.name = name;
 		this.age = age;
 	}
 
 	private void writeObject(ObjectOutputStream oos) throws Exception {
-		oos.writeUTF(name);
-		oos.writeInt(age);
+		DataOutputStream dos = new DataOutputStream(oos);
+		dos.writeUTF(name + "::" + age);
 	}
 
 	private void readObject(ObjectInputStream ois) throws Exception {
-		this.name = ois.readUTF();
-		this.age = ois.readInt();
+		DataInputStream dis = new DataInputStream(ois);
+		String[] contents = dis.readUTF().split("::");
+		this.name = contents[0];
+		this.age = Integer.parseInt(contents[1]);
 	}
 
 	public String getName() { return name; }

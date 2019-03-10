@@ -126,7 +126,51 @@ public interface Externalizable {
 
 2）writeExternal/readExternal方法是公开(public)的，而writeObject/readObject方法是私有(private)的。
 
-使用场景：发送方只序列化对象的主键，而不序列化其状态；接收方通过对象的类和主键重建其状态（状态可能保存在数据库中）。
+3）使用Externalizable接口序列化时，JVM不直接处理类对象的字段，所以不需要像第一种方法一样把字段标注为transient。
+
+使用场景之一：发送方只序列化对象的主键，而不序列化其状态；接收方通过对象的类和主键重建其状态（状态可能保存在数据库中）。
+
+示例:
+```java
+public class Person implements Externalizable {
+	private static final long serialVersionUID = -2654901401681242080L;
+	private String name;
+	private int age;
+
+	public Person(){}
+
+	public Person(final String name, final int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	@Override
+	public void writeExternal(ObjectOutput out) throws IOException {
+		String pk = name + "::" + age;
+		out.write(pk.getBytes());
+	}
+
+	@Override
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+
+		byte[] buffer = new byte[1024];
+		int read = in.read(buffer);
+		String content = new String(buffer, 0, read);
+		String[] strings = content.split("::");
+		this.name = strings[0];
+		this.age = Integer.parseInt(strings[1]);
+	}
+
+	public String getName() { return name; }
+	public int getAge() { return age; }
+
+	@Override
+	public String toString() {
+		return "Person{name='" + name + "', age=" + age + '}';
+	}
+}
+```
+备注：上面的代码由于没有实际与数据库交换，所以用 name + age模拟了数据库主键，实际的实现中，可能是由数据写入方在writeExternal中把主键序列化，把对象状态存入数据库，然后把序列化后的字节流通过网络发送给数据读取方；数据读取方在接收到字节流后，进行反序列化时，在readExternal中字节流中反序列化得到主键，然后根据主键从数据库中读取对象状态，从而创建完整的对象。
 
 
 方法3：使用代理类进行序列化/反序列化

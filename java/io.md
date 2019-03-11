@@ -45,7 +45,7 @@ Files.newBufferedWriter(path, StandardOpenOption.DELETE_ON_CLOSE );
 ```
 
 ### 5.如何在printf中只传入参数一次，却使用多次？
-在格式占位符%后加参数序号（从1开始）
+在格式占位符%后加参数序号（从1开始）和一个美元符号$
 ```java
 Calendar calendar = GregorianCalendar.getInstance();
 calendar.set(1969, 6, 20);

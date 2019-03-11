@@ -1,6 +1,6 @@
-# Java 备忘录
+# 技术备忘录
 ## 目录
-  1. [Input/Output](io.md)
-  2. [流式数据处理](stream.md)
-  3. [Zip/GZip](zip.md)
-  4. [序列化/反序列化](serialization.md)
+  1. [Java语法、Java基础类库和Java虚拟机](java/README.md)
+  2. [测试](testing/README.md)
+  3. [Git](git/README.md)
+  

@@ -1,4 +1,4 @@
-# [Java 备忘录](README.md) | 序列化/反序列化
+# [技术备忘录](../README.md) | [Java语法、Java基础类库和Java虚拟机](README.md) | 序列化/反序列化
 ## 目录
   1. [如何序列化对象？](#serialize-object)
   2. [如何通过反序列化创建对象？](#create-object-by-deserialization)

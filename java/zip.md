@@ -1,4 +1,4 @@
-# [Java 备忘录](README.md) | Java Zip/GZip
+# [技术备忘录](../README.md) | [Java语法、Java基础类库和Java虚拟机](README.md) | Java Zip/GZip
 ## 目录
   1. [如何向一个GZip文件写入数据？](#write-to-gzip)
   2. [如何从一个GZip文件读取数据？](#read-from-gzip)

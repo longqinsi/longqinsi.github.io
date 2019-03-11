@@ -42,3 +42,15 @@ Files.newBufferedWriter(path, StandardOpenOption.APPEND);
 Path path = Paths.get("files/data.txt");
 Files.newBufferedWriter(path, StandardOpenOption.DELETE_ON_CLOSE );
 ```
+
+### 5.如何在printf中只传入参数一次，却使用多次？
+在格式占位符%后加参数序号（从1开始）
+```java
+Calendar calendar = GregorianCalendar.getInstance();
+calendar.set(1969, 6, 20);
+System.out.printf("人类于%1$tY年%1$tm月%1$te日登上月球。", calendar);
+```
+程序输出：
+```bash
+Man walked on the moon on: 07 20 1969
+```

@@ -1,4 +1,5 @@
-# [技术备忘录](../README.md) | Java语法、Java基础类库和Java虚拟机
+# [技术备忘录](../README.md) | Java
+Java语法、Java基础类库和Java虚拟机
 ## 目录
   1. [Input/Output](io.md)
   2. [流式数据处理](stream.md)

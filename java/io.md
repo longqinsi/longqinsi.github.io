@@ -60,4 +60,4 @@ Man walked on the moon on: 07 20 1969
 
 ### 6. What's a hybrid stream?<a name="hybrid-stream"></a>[↑](#top)
 A hybrid stream is just a regular character stream, and a binary stream that are open together, on the same binary stream.
-There is [a code example](https://github.com/longqinsi/HybridStreams), which is taken from the last module [Dealing with Hybrid Streams of Text and Bytes](https://app.pluralsight.com/player?course=java-fundamentals-input-output&author=jose-paumard&name=dfbf5974-c66a-479b-89ed-87d01d4010d7&clip=0&mode=live) of [Jose Paumard](http://blog.paumard.org/en/) 's [pluralsight](https://www.pluralsight.com/) course [Java Fundamentals: Input/Output](https://app.pluralsight.com/library/courses/java-fundamentals-input-output).
+There is [a code example](https://github.com/longqinsi/HybridStreams), taken from José Paumard.

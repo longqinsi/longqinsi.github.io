@@ -61,3 +61,4 @@ Man walked on the moon on: 07 20 1969
 ### 6. What's a hybrid stream?<a name="hybrid-stream"></a>[↑](#top)
 A hybrid stream is just a regular character stream, and a binary stream that are open together, on the same binary stream.
 There is [a code example](https://github.com/longqinsi/HybridStreams), taken from José Paumard.
+Please refer to [WritingHybridStream.java](https://github.com/longqinsi/HybridStreams/blob/master/src/org/paumard/io/WritingHybridStream.java) for how to write to hybrid streams, and [ReadingHybridStream.java](https://github.com/longqinsi/HybridStreams/blob/master/src/org/paumard/io/ReadingHybridStream.java) for how to read from hybrid streams.

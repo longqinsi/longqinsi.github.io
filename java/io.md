@@ -64,10 +64,10 @@ There is a code example [HybridStreams](https://github.com/longqinsi/HybridStrea
 Please refer to [WritingHybridStream.java](https://github.com/longqinsi/HybridStreams/blob/master/src/org/paumard/io/WritingHybridStream.java) for how to write to hybrid streams, and [ReadingHybridStream.java](https://github.com/longqinsi/HybridStreams/blob/master/src/org/paumard/io/ReadingHybridStream.java) for how to read from hybrid streams.
 
 ### 7. What's marking, resetting and skipping of the Reader api, and how to use them?<a name="reader-mark-reset-skip"></a>[↑](#top)
-Readers support **marking**, **resetting**, and **skipping**. 
+Readers support **[marking](https://docs.oracle.com/javase/8/docs/api/java/io/Reader.html#mark-int-)**, **[resetting](https://docs.oracle.com/javase/8/docs/api/java/io/Reader.html#reset--)**, and **[skipping](https://docs.oracle.com/javase/8/docs/api/java/io/Reader.html#skip-long-)**. 
 A reader **can** skip elements. It is supported by all the implementations of the Reader abstract class. 
 A reader **may** support reset, which is go back to the beginning. It is not necessarily supported by all the implementations of the Reader abstract class, but we cannot test it is supported or not.
-A Reader **may** support the marking of the character stream, and we can test if the mark operation is supported or not with the markSupported() method call. 
+A Reader **may** support the marking of the character stream, and we can test if the mark operation is supported or not with the [markSupported()](https://docs.oracle.com/javase/8/docs/api/java/io/Reader.html#markSupported--) method call. 
 How to use mark, reset and skip?
 A mark() call just puts a flag on a given element of the character stream. If I call reset(), it will rewind to the previously marked element if there is one. If it's not the case, it will rewind to the beginning of the stream. And a skip() call just skips the next element of the character stream.
 Refer to [ReadingHybridStream.java](https://github.com/longqinsi/HybridStreams/blob/master/src/org/paumard/io/ReadingHybridStream.java) for an exmaple.

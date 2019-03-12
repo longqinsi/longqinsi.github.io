@@ -7,7 +7,7 @@
   4. [如何在关闭文件时删除它？](#delete-on-close)
   5. [如何在printf中只传入参数一次，却使用多次？](#printf-argument-index)
   6. [What's a hybrid stream?](#hybrid-stream)
-
+  7. [What's marking, resetting and skipping of the Reader api, and how to use them?](#reader-mark-reset-skip)
 ## 问题
 ### 1.如何递归获取指定目录下的所有子目录和文件？<a name="recursively-ls"></a>[↑](#top)
 
@@ -62,3 +62,12 @@ Man walked on the moon on: 07 20 1969
 A hybrid stream is just a regular character stream, and a binary stream that are open together, on the same binary stream.
 There is a code example [HybridStreams](https://github.com/longqinsi/HybridStreams), taken from José Paumard.
 Please refer to [WritingHybridStream.java](https://github.com/longqinsi/HybridStreams/blob/master/src/org/paumard/io/WritingHybridStream.java) for how to write to hybrid streams, and [ReadingHybridStream.java](https://github.com/longqinsi/HybridStreams/blob/master/src/org/paumard/io/ReadingHybridStream.java) for how to read from hybrid streams.
+
+### 7. What's marking, resetting and skipping of the Reader api, and how to use them?<a name="reader-mark-reset-skip"></a>[↑](#top)
+Readers support **marking**, **resetting**, and **skipping**. 
+A reader **can** skip elements. It is supported by all the implementations of the Reader abstract class. 
+A reader **may** support reset, which is go back to the beginning. It is not necessarily supported by all the implementations of the Reader abstract class, but we cannot test it is supported or not.
+A Reader **may** support the marking of the character stream, and we can test if the mark operation is supported or not with the markSupported() method call. 
+How to use mark, reset and skip?
+A mark() call just puts a flag on a given element of the character stream. If I call reset(), it will rewind to the previously marked element if there is one. If it's not the case, it will rewind to the beginning of the stream. And a skip() call just skips the next element of the character stream.
+Refer to [ReadingHybridStream.java](https://github.com/longqinsi/HybridStreams/blob/master/src/org/paumard/io/ReadingHybridStream.java) for an exmaple.

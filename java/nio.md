@@ -22,8 +22,9 @@ Reference source: Questions 2 & 3 are cited from José Paumard's pluralsight cou
 [Java Fundamentals: NIO and NIO2](https://app.pluralsight.com/library/courses/java-fundamentals-nio-nio2)
 
 ### 4.JDK中用于访问文件和网络的API有哪些？<a name="java-io-api-versions"></a>[↑](#top)
-- | 名称    | 发布年份 | JDK版本
-- | ------ | ------ | -------
-1 | Java I/O | 1996 | Java 1
-2 | Java NIO | 2002 | Java 4
-3 | Java NIO 2 | 2011 | Java 7  
+
+名称 | 发布年份 | JDK版本
+------ | ------ | -------
+Java I/O | 1996 | Java 1
+Java NIO | 2002 | Java 4
+Java NIO 2 | 2011 | Java 7  

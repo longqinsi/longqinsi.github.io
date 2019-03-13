@@ -16,3 +16,6 @@ Non-blocking Input Output
 * Native access to file systems.
 * API to explore very large directory trees.
 * Respond to file creations and events.
+
+Reference source: Questions 2 & 3 are cited from José Paumard's pluralsight course
+[Java Fundamentals: NIO and NIO2](https://app.pluralsight.com/library/courses/java-fundamentals-nio-nio2)

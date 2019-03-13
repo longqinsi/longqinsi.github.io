@@ -163,7 +163,7 @@ Channel factory method reference list:
   
   All these operations along with the mark operation return ```this``` and can be chained.
 
-  ### 11. How to write content to a file using buffers and channels?
+### 11. How to write content to a file using buffers and channels?
   A channel can only write to a ByteBuffer.
   1. create a ByteBuffer.
   2. use the putXXX() method to write data
@@ -179,9 +179,110 @@ Channel factory method reference list:
     }
   ```
 
-  ### 12. How to read a file using nio?
+### 12. How to read a file using nio?
   * In order to properly read a file we need to understand how buffers work.
     * First, we create a channel on the given file
     * Then read the content of the file into the byte buffer
     * Then read the byte buffer and translate its content
   ![在使用channel把数据读取到byte buffer后，调用byte buffer的asXXXBuffer()方法之前，需要调用其flip方法设置position和limit](/images/java-nio-buffer-flip.png)
+
+### 13. Rewind vs. Flip
+* Rewind just resets the cursor.
+* Flip resets the cursor and prevents readings past what has been written into the buffer.
+  
+So to properly conduct read operation, most of the time it is the flip operation that it used.
+
+### 14. Reading and writing to multiple buffers at the same time
+* The reading of a file into multiple buffers is called **the scattering read operation**. 
+It consists reading from a single channel, that is from a single file, to an array of
+buffers. 
+  * It is specified by the [ScatteringByteChannel](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/ScatteringByteChannel.html) interface.
+  * The reading process fills the first buffer before moving to the next, and continues with the
+next one and so on.
+* The opposite is called **the gathering write operation**, which consists writing from an array
+of buffers to a single Channel.
+  * It is specified by the [GatheringByteChannel](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/GatheringByteChannel.html).
+  * Writing operation does the exact opposite as the reeading operation. It starts with the first
+    buffer, then the next one and so on.
+* The **Gather/Scatter** pattern is useful when handling messages with **fixed-length parts**.
+  * Suppose we have a 1024 bytes header followed by a 4096 bytes body, ending with a 128 bytes footer.
+    Then we can set up an array of three buffers of the right size, plug a channel on these buffers,
+    then the first reading will fill the first buffer, second reading will fill the body, and
+    the third reading will fill the footer.
+    ![](/images/java-nio-fixed-length-messages.png)
+* The read operation example:
+```java
+ByteBuffer header = ByteBuffer.allocate(1024);
+ByteBuffer body   = ByteBuffer.allocate(4096);
+ByteBuffer footer = ByteBuffer.allocate(128);
+
+ByteBuffer[] message = {header, body, footer};
+
+long bytesRead = channel.read(message);
+```
+* The write operation example:
+```java
+ByteBuffer header = ByteBuffer.allocate(1024);
+ByteBuffer body   = ByteBuffer.allocate(4096);
+ByteBuffer footer = ByteBuffer.allocate(128);
+
+ByteBuffer[] message = {header, body, footer};
+
+long bytesRead = channel.read(message);
+```
+**Remember to properly rewind the buffers when using them.**
+### 15. [MappedByteBuffer](https://docs.oracle.com/javase/8/docs/api/java/nio/MappedByteBuffer.html)
+MappedByteBuffer is a buffer that maps a file to memory.
+
+Think of a buffer that is able to load a file in memory thus all the parts of
+your application that are reading the same file again and again will be much
+more efficient since the readings will take place in memory instead of taking
+place on the disk.
+
+There are three modes for MappedByteBuffers:
+  * READ - probably the most useful one
+  * READ_WRITE - you can both read and modify a file through the buffer
+  * PRIVATE - The modifications will be made private
+
+The way the MappedByteBuffer is created also allows for the buffering of a **portion**
+of a **file** instead of the whole file itself.
+```java
+FileChannel fileChannel = FileChannel.open(
+  Paths.get("files/ints.bin"), StandardOpenOption.READ);
+MappedByteBuffer mappedBuffer = fileChannel.map(
+  FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
+CharBuffer charBuffer = StandardCharsets.UTF_8.decode(mappedBuffer);
+```
+### 16. Using Charsets to convert byte buffers to char buffers.
+A charset has two methods:
+- [encode()](https://docs.oracle.com/javase/8/docs/api/java/nio/charset/Charset.html#encode-java.nio.CharBuffer-): takes a CharBuffer, returns a ByteBuffer
+- [decode()](https://docs.oracle.com/javase/8/docs/api/java/nio/charset/Charset.html#decode-java.nio.ByteBuffer-): takes a ByteBuffer, returns a CharBuffer
+
+Using these methods is the **only way** to convert a **CharBuffer** to a **ByteBuffer** and vice-versa.
+```java
+FileChannel channel = FileChannel.open(
+  Paths.get("files/text-latin1.txt", StandardOpenOption.READ));
+ByteBuffer buffer = ByteBuffer.allocate(1024);
+channel.read(buffer);
+
+CharSet latin1 = StandardCharsets.ISO_8859_1;
+CharBuffer utf8Buffer = latin1.decode(buffer);
+
+String result = new String(utf8Buffer.array());
+```
+
+```java
+CharSet utf8 = StandardCharsets.UTF_8;
+ByteBuffer byteBuffer = utf8.encode(buffer);
+
+anotherFileChannel.write(byteBuffer);
+```
+
+### 17. Buffers and Charsets
+* Channels can only read and write byte buffers
+* Encoding and decoding via a Charset is the only way to convert a byte buffer to a char buffer and vice-versa.
+
+### 18. [Channels](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/Channels.html) - bridge between Java NIO and Java I/O API
+* to create channels from InputStream and OutputStream
+* to create InputStream and OutputStream from a channel, asynchronous or not
+* to create readers and writers from a channel, providing a charset

@@ -9,10 +9,10 @@
 Non-blocking Input Output
 
 ### 2.What does nio bring to Java?<a name="nio-features"></a>[↑](#top)
-1) Support for very large buffers.
-2) Asynchronous capabilities.
+* Support for very large buffers.
+* Asynchronous capabilities.
 
 ### 3.What does nio2 bring to Java?<a name="nio2-features"></a>[↑](#top)
-1) Native access to file systems.
-2) API to explore very large directory trees.
-3) Respond to file creations and events.
+* Native access to file systems.
+* API to explore very large directory trees.
+* Respond to file creations and events.

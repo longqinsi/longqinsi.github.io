@@ -1,4 +1,4 @@
-# [技术备忘录](../README.md) | [Java](README.md) | NIO/NIO2
+# [技术备忘录](../README.md) | [Java](README.md) | NIO
 ## 目录
   1. [NIO的全称是什么？](#what-does-nio-stands-for)
   2. [What does nio bring to Java?](#nio-features)

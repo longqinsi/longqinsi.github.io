@@ -268,7 +268,8 @@ channel.read(buffer);
 CharSet latin1 = StandardCharsets.ISO_8859_1;
 CharBuffer utf8Buffer = latin1.decode(buffer);
 
-String result = new String(utf8Buffer.array());
+String result = utf8Buffer.toString();
+System.out.println("Result = " + result);
 ```
 
 ```java

@@ -64,3 +64,53 @@ By default, the JDK provides two file systems:
 
   1. The default file system which is the classical disk file system
   2. A JAR file system that can be set up in memory or directly on the disk.
+
+### 4. 在Java 7中引入了什么机制来监控文件系统的变化？
+[WatchService](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/nio/file/WatchService.html) pattern.
+
+It still uses a special thread
+But no scheduler
+No events are missed(almost)
+  * Some events may be missed in some cases.
+  * It is plugged directly on the signals emitted by the native file system.
+
+Setting up a watch service is a four-steps process:
+1. create a watch service
+2. register the watch service to a directory
+3. gets the returned key
+4. poll the events and analyze them.
+
+```java
+Path dir = Paths.get("D:/logs");
+FileSystem fileSystem = dir.getFileSystem();
+WatchService watchService = fileSystem.newWatchService();
+WatchKey key = dir.register(watchService,
+                       StandardWatchEventKinds.ENTRY_CREATE,
+                       StandardWatchEventKinds.ENTRY_DELETE,
+                       StandardWatchEventKinds.ENTRY_MODIFY);
+while (key.isValid()) {
+  // or poll with / without a timeout
+  WatchKey take = watchService.take();
+  List<WatchEvent<?>> events = take.pollEvents();
+  // work with the events
+  for (WatchEvent<?> event : events) {
+    WatchEvent.Kind<?> kind = event.kind();
+    if(kind == StandardWatchEventKinds.OVERFLOW) { // overflow
+      continue;
+    }
+    // operations on the elements
+  }
+  take.reset();
+}
+```
+
+* The WatchKey Object
+  * [isValid()](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/nio/file/WatchKey.html#isValid()) returns true as long as the directory is accessible
+  * Three methods to poll events:
+    * [take()](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/nio/file/WatchService.html#take()): a blocking call
+      * as long as there are no events availabe, this method will not return
+    * [poll()](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/nio/file/WatchService.html#poll()): non-blocking, can return null
+    * [poll(long, TimeUnit)](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/nio/file/WatchService.html#poll(long,java.util.concurrent.TimeUnit)): poll with a timeout, can return null
+
+* If there are too many events generated, an OVERFLOW is added to the queue.
+Some events may have been missed.

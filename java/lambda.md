@@ -8,8 +8,9 @@
 ## 问题
 ### 1.java.util.function中的接口可分为哪四类？<a name="java-util-function-interface-categories"></a>[↑](#top)
 java.util.function中一共有43个接口，可分为四类
-1. The Consumers(消费者接口)
-* A consumer consumes an object and does not return anything.
+    
+    1. The Consumers(消费者接口)
+         * A consumer consumes an object and does not return anything.
 
 ```java
 public interface Consumer<T> {
@@ -26,8 +27,9 @@ public interface BiConsumer<T, V> {
     void accept(T t, V v);
 }
 ```
-2. The Supplier(生产者接口)
-* A supplier is the opposite of a consumer. It provides an object, takes not parameter.
+
+    2. The Supplier(生产者接口)
+       * A supplier is the opposite of a consumer. It provides an object, takes not parameter.
 
 ```java
 public interface Supplier<T> {
@@ -39,8 +41,9 @@ public interface Supplier<T> {
 Supplier<Person> personSupplier = Person::new;
 ```
 
-3. The Functions(函数接口)
-* A function takes an object and returns another object
+    3. The Functions(函数接口)
+       * A function takes an object and returns another object
+
 ```java
 public interface Function<T, R> {
     R apply(T t);
@@ -66,8 +69,9 @@ public interface BinaryOperator<T> extends BiFunction<T, T, T> {}
 ```
 
 
-4. The Predicates(判断条件接口)
-* A predicate takes an ojbect and returns a boolean
+    4. The Predicates(判断条件接口)
+       * A predicate takes an ojbect and returns a boolean
+
 ```java
 public interface Predicate<T>  {
     boolean test(T t);

@@ -6,7 +6,7 @@
   3. [java.util.function的各个函数式接口的方法名称是什么？](#method-names-of-java-util-function-interfaces)
   4. [java.util.function的函数式接口提供了哪些默认/静态方法？](#default-and-static-methods-provided-by-java-util-function-interfaces)
 ## 问题
-### 1.java.util.function中的接口可分为哪四类？<a name="java-util-function-interface-categories></a>[↑](#top)
+### 1.java.util.function中的接口可分为哪四类？<a name="java-util-function-interface-categories"></a>[↑](#top)
 java.util.function中一共有43个接口，可分为四类
 1. The Consumers(消费者接口)
 * A consumer consumes an object and does not return anything.

@@ -1,4 +1,4 @@
-# [Java](README.md) | Java8流式数据处理
+# [技术备忘录](../README.md) | [Java](README.md) | Java8流式数据处理
 ## 目录
   1. [如何把一个流的数据拼接为字符串？](#join-stream)
   2. [map(映射)/filter(过滤)/reduce(规约)](#map-filter-reduce)

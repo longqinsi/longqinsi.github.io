@@ -189,7 +189,7 @@ sorted() | - | SORTED, ORDERED
 distinct() | - | DISTINCT
 limit() | SIZED | -
 peek() | - | -
-unordered() | ORDERED, SORTED | -
+unordered() | ORDERED | -
 
 > The sorted() method can only be called on a stream of Comparable objects.
 > But is is not verified at compile time, so if my stream is not a stream

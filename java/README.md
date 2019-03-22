@@ -12,3 +12,4 @@ Java语法、Java基础类库和Java虚拟机
   1. [NIO2与目录树](nio2-directory-navigation.md)
   1. [Lambda表达式，函数式接口](lambda.md)
   1. [集合](collection.md)
+  1. [Java8流式数据处理-利用Optionals处理数据处理中的错误](optionals.md)

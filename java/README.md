@@ -4,6 +4,7 @@ Java语法、Java基础类库和Java虚拟机
   1. [Input/Output](io.md)
   1. [流式数据处理](stream.md)
   1. [流式数据处理-高阶主题](stream-advanced-topics.md)
+  1. [Java8流式数据处理-Collectors](stream-collectors.md)
   1. [Zip/GZip](zip.md)
   1. [序列化/反序列化](serialization.md)
   1. [NIO](nio.md)

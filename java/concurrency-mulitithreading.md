@@ -127,6 +127,182 @@
 --------------------------------------------------
 
 ### 6. How to implement the producer/consumer pattern using wait/notify?
+* The Runnable pattern
+  > This is the first pattern used to launch threads in Java.
+  > 
+  > Introduced in Java 1.0
+  >
+  > Other patterns have been introduced in Java 5, in the java.util.concurrent API
+  * How to launch a thread?
+    > A thread executes a task. In Java 1, the model for a task is the Runnable interface
+    > The Runnable pattern launches a thread in three steps:
+    > 1. create an instance of Runnable
+    > 2. create an instance of Thread with the Runnable instance as a parameter
+    > 3. Launch the thread
+      ```java
+      @FunctionalInterface
+      public interface Runnable {
+        void run();
+      }
+      ```
+
+      ```java
+      Runnable task = () -> System.out.println("Hello world!");
+      Thread thread = new Thread(task);
+      thread.start();
+      ```
+      * How to know in which thread a task is executed?
+        > The [Thread.currentThread()](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/lang/Thread.html#currentThread()) static method returns the current thread.
+        ```java
+        Runnable task = () -> {
+          // Print out the name of the thread running this task.
+          System.out.println(Thread.currentThread().getName());
+        }
+        ```
+  * How to stop a Thread?
+    > Stopping a Thread is more tricky than it seems. 
+    > 
+    > There is ~~Thread.stop()~~ method, but it should not be used. This method was introduced in the first version of the Thread class before the people who wrote it realized that it was a wrong idea to create such a method. It is there for legacy, backward compatiblity reasons.
+    > 
+    > The right pattern is to use the [interrupt()](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/lang/Thread.html#interrupt()) method.
+    > 
+    > Note: The interrupt() method will not stop a thread, but merely send a signal to the task the thread is running telling it that it it time for this task to stop itself. The code of the task should call [isInterrupted()](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/lang/Thread.html#isInterrupted()) to decide to terminate itself.
+    ```java
+    Runnable task = () -> {
+      while(!Thread.currentThread().isInterrupted()) {
+        // the task itself
+      }
+    };
+    Thread t1 = new Thread(task);
+    t1.start();
+    // ...
+    t1.interrupt();
+    ```
+    * The call to interrupt() causes the isInterrupted() method to return true
+    * If the thread is blocked, or waiting, then the corresponding method will throw an InterruptedException
+      * The methods wait()/notify(),join() throw InterruptedException
+
+
+* The producer/consumer pattern
+  > This pattern is very widely used. There are several solutions to implement it in Java. We are going to see the most simple one, which is based on the Wait/Notify pattern.
+  * What is a producer/consumer?
+    > * A producer produces values stored in a buffer, i.e. an array.
+    > * A consumer consumes the values from this buffer.
+    > 
+    > Most of time, there can be more than more producer, more than one consumer, and they are all executed in their own thread.
+    >   * And be careful: the buffer can be empty, or full.
+    >     * If it is empty, a consumer cannot consume values.
+    >     * If it is full, a producer should not try to add values in it.
+    > Note: This buffer is shared among all the threads, may be the object of a race condition if
+    > I do not properly synchronize my code.
+    ```java
+    int count = 0;
+    int[] buffer = new int[BUFFER_SIZE];
+
+    class Producer = {
+      public void produce() {
+        while(isFull(buffer)) {}
+        buffer[count++] = 1;
+      }
+    }
+
+    class Consumer = {
+      public void consume() {
+        whild(isEmpty(buffer)) {}
+        buffer[--count] = 0;
+      }
+    }
+    ```
+    > There is race condition in the the code above.
+    > * Several threads are reading and writing the buffer at the same time = race condition
+    * How to fix the above producer/consumer?
+      > One way to fix it is to synchronize the acces to the array. 
+
+          ```java
+          private Object lock;
+
+          class Producer = {
+            public void produce() {
+              synchronized(lock){
+                while(isFull(buffer)) {}
+                buffer[count++] = 1;
+              }
+            }
+          }
+          
+          class Consumer = {
+            public void synchronized consume() {
+              synchronized(lock){
+                whild(isEmpty(buffer)) {}
+                buffer[--count] = 0;
+              }
+            }
+          }
+          ```
+      > * The code above used a common lock to synchronize all the producers and consumers.
+      > * But what happens if the buffer is empty?
+      >   * The thread executing this consumer is blocked in the while loop, so the producer has no chance to add objects to the buffer! This way of naively synchronizing the two methods will lead to a deadlock.
+      >
+      > We need a way to "park" a thread while it is waiting for some data to be produced, without blocking all the other threads. The key held by this thread should be release while this thread is "parked"
+      > * This is the wait/notify pattern
+  * wait()/notify()
+    * wait() and notify() are two methods from the Object class
+      > The thread executing the invocation should be holding the key of that object.
+      > * If the thread that is executing a wait method does not hold the key of the object on which it is executing this method, then an [IllegalMonitorStateException](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/lang/IllegalMonitorStateException.html) is raised.
+      > * So: wait() and notify() cannot be invoked outside a synchronized block.
+    * What happens when calling wait() in a thread
+      1. Releases the key held by the thread
+      2. Puts the thread in a [WAITING](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/lang/Thread.State.html#WAITING) state
+         > The only way to release a thread from a WAITING state is to notify it.
+    * What happens when calling notify?
+      * Calling notify() releases a thread that is in WAITING state and puts it in RUNNABLE state
+      * If there are more than one thread in the WAITING state (which is the case most of the time), the released thread by the notify method is chosen randomly.
+      * There is also a [notifyAll()](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/lang/Object.html#notifyAll()) method that will awake all the threads in the WAITING state.
+        ```java
+        private Object lock;
+        class Producer {
+          public void produce() {
+            synchronized(lock) {
+              if(isFull(buffer))
+                lock.wait();
+              buffer[count++] = 1;
+              lock.nitfyAll();
+            }
+          }
+        }
+
+        class Consumer {
+          public void consume() {
+            synchronized(lock) {
+              if(isEmpty(buffer))
+                lock.wait();
+              buffer[--count] = 0;
+              lock.notifyAll();
+            }
+          }
+        }
+        ```
+        > The code above is a **really working** implementation of producer/consumer pattern with synchronization and wait()/notify(). 
+
+  * How to implement it using *synchronization* and the *wait/notify* pattern?
+
+### 7. The state of a thread
+* A thread can be running or not
+  * If it is not running, can the thread scheduler give it a hand?
+    > In fact, there several answers. In most of the time, the answer is yes, but there are cases in which the answer is no.
+    > * If the thread is in the WAITING list, the answer is no.
+![The states of a thread](/images/states-of-a-thread.png)
+
+    > * The thread scheduler can run the threads in the state RUNNABLE
+    > * A BLOCKED thread can only run again when the key is released.
+    > * A WAITING thread can only run again when the notify() method is called.
+* How to get the state of a thread?
+  * By calling the [getState()](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/lang/Thread.html#getState()) method.
+      ```java
+      Thread t = ...;
+      Thread.State state = t.getState();
+      ``` 
+
 
 ### 7. Ordering reads and writes operations on a multicore CPU
 > Concurrent programming has nothing to do on a monocore CPU and on a multicore CPU.

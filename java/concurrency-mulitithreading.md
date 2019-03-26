@@ -416,3 +416,8 @@
 
 ### 8. Implementing a thread safe singleton on a multicore CPU
 > This is an application, a use case description, implementing a thread safe version of a singleton pattern on a multicore CPU. It is the occasion to show an example and to come back on all the abstract concepts we are going to describe in this course.
+
+### 9. Synchronized or volatile?
+- Synchronized = atomicity
+  * if you have a portion of code that should not be interrupted between threads, then you need to have a synchronized block to protect this portion of code.
+* Volatile = visibility 

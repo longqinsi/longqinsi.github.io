@@ -124,6 +124,111 @@
 
 ### 5. Visibility, false sharing, happens-before link
 
+* What is *visibility*?
+  > Bound to the way multicore CPUs work
+  * Synchronization and visibility
+    > Synchronization is about protecting a block of code, which might be a whole method or some portion of a method. It guarantees this code is executed by only one thread at a time.
+    > * Synchronization is about preventing two threads from executing this piece of code at the same time. It is there to prevents race condition.
+    > look at the code below:
+    > ```java
+    > public void consume() {
+    >   synchronized(lock) {
+    >     while (isEmpty(buffer)) {}
+    >     buffer[--count] = 0;
+    >   }
+    > }
+    >
+    > public void produce() {
+    >   synchronized(lock) {
+    >     while (isFull(buffer)) {}
+    >     buffer[count++] = 0;
+    >   }
+    > }
+    > ```
+    > 20 years ago, when CPU had no cache, this code was working fine.
+    > 
+    > But nowadays, things do not work like that any more! 
+    > A CPU does not read a variable from the main memory, but from a cache.
+    > 
+    > ![visibility](/images/visibility-in-the-context-of-concurrency.png)
+    
+    * Visibility is about informing the other caches of my CPU that a variable has been modified and that write value is in one of the caches of the CPU and should not be fetched from the main memory.
+      > A variable is said visible, if the writes made on it are visible, which means the reads made on this variable are going to return the correct value.
+      > * **All the synchronized writes are visible.** That is all the modification of variables made within the boundary of a synchronized block, are visible. 
+
+
+
+* What is the "[happens before](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/util/concurrent/package-summary.html#MemoryVisibility)" link?
+> The "happens before" link is an abstract notion introduced in Java to help us order the read and the write operations on a multicore CPU.
+> * There are multiple references to happens-before in the Javadoc, esp. several special classes from the java.util.concurrent package, such as [BlockingQueue](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/util/concurrent/BlockingQueue.html), [CyclicBarrier](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/util/concurrent/CyclicBarrier.html), [CountDownLatch](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/util/concurrent/CountDownLatch.html)
+
+* The Java Memory Model 
+> * Multicore CPU brings new problems:
+>   * Read and writes can really happen at the same time.
+>   * A given variable can be stored in more than one place.
+> * Visibility means "a read should return the value set by the **last** write".
+>   * What does the word last mean?
+>     * We need a timeline to put read and write operations on.
+> ![](/images/java-memory-model-1.png)
+> ![](/images/java-memory-model-2.png)
+> * How can we set up a "happens-before" link?
+>   * There is no such keyword in the Java language...
+>   * A "happens before" link exists between all synchronized or volatile write operations and all synchronized or volatile read operations that follow.
+> 
+> Example 1: no happens before
+> ![Happens Before Example #1 - no happens before](/images/happens-before-example-1.png)
+> 
+> Example 2: synchronization
+> ![Happens Before Example #2 - synchronization](/images/happens-before-example-2.png)
+> 
+> Example 3: volatile
+> ![Happens Before Example #3 - volatile](/images/happens-before-example-3.png)
+> 
+> Example 4: A more complex Exmaple
+> ![Happens Before Example #4 - A more complex Exmaple - 1](/images/happens-before-example-4-1.png)
+> ![Happens Before Example #4 - A more complex Exmaple - 2](/images/happens-before-example-4-2.png)
+> ![Happens Before Example #4 - A more complex Exmaple - 3](/images/happens-before-example-4-3.png)
+> ![Happens Before Example #4 - A more complex Exmaple - 4](/images/happens-before-example-4-4.png)
+> From a concurrent programming point of view, this code is buggy because I cannot tell in advance what value r2 will receive.
+
+* Summary:
+  * Synchronization - Guarantees the exclusive execution of a block of code
+  * Visibility - Guarantees the consistency of the variables
+ 
+* **All shared variables should be accessed in a synchronized or a volatile way.**
+  > If you see a piece of code that is read or written by more than thread and that is neither synchronized nor volatile then you have a race condition and a bug in your code.
+
+* What is "False sharing"?
+  > False sharing happens becasue of the way the CPU caches work.
+  > 
+  > It is a side effect, that can have a tremendous effect on performance.
+  >
+  > The cache is organized in lines of data. 
+  > * Each line can hold 8 longs (64 bytes). 
+  > * When a visible variable is modified in an L1 cache, all the line is marked "dirty" for the other caches.
+  > * A read on a dirty line triggers a refresh on the whole line, not just on the variable that has been modified. 
+  > An example shown as below:
+  > ![false sharing example - step 1](../images/false-sharing-1.png)
+  > 
+  > ![false sharing example - step 2](../images/false-sharing-2.png)
+  > 
+  > ![false sharing example - step 3](../images/false-sharing-3.png)
+  > 
+  > ![false sharing example - step 4](../images/false-sharing-4.png)
+  > 
+  > ![false sharing example - step 5](../images/false-sharing-5.png)
+  >
+  > * False sharing happens in an invisible way, because when we write some code and when we write a class, we have no idea of how the class and its field are laid out in memory. It is hard to predict, but it is with no doubt hitting the performances of our application.
+  >   * There are workarounds to prevent false sharing from happening in very simple case.
+  >     * Below is an example to work around it by variable padding.
+* What does *volatile* mean?
+ 
+  * How it can be used?
+  * Why it should be used sometimes on the declaration of fields?
+
+* The impact of *false sharing* on code
+  > The side effect of the way the multicore CPUs work - that is, CPU calls caches are organized, which is called "false sharing".
+
 --------------------------------------------------
 
 ### 6. How to implement the producer/consumer pattern using wait/notify?
@@ -312,3 +417,7 @@
 ### 8. Implementing a thread safe singleton on a multicore CPU
 > This is an application, a use case description, implementing a thread safe version of a singleton pattern on a multicore CPU. It is the occasion to show an example and to come back on all the abstract concepts we are going to describe in this course.
 
+### 9. Synchronized or volatile?
+- Synchronized = atomicity
+  * if you have a portion of code that should not be interrupted between threads, then you need to have a synchronized block to protect this portion of code.
+* Volatile = visibility 

@@ -3,6 +3,7 @@
   1. [如何在本地新建分支？](#create-branch)
   2. [如何把本地新建的分支推送到远程仓库？](#push-new-local-branch-to-remote)
   3. [解决Git在Linux 乱码问题](#git-linux-encoding)
+  4. [如何为github.com设置ssh协议的代理？](#github-ssh-proxy)
   
 ## 问题
 ### 1.如何在本地新建分支？<a name="create-branch"></a>[↑](#top) 
@@ -28,4 +29,15 @@ $ git config --global core.quotepath false
 ```
 [core]
     quotepath = false
+```
+### 4. 如何为github.com设置ssh协议的代理？<a name="github-ssh-proxy"></a>[↑](#top)
+实际上是为github.com设置ssh代理。在~/.ssh/config中添加如下配置
+```
+Host github.com
+  User git
+  ProxyCommand connect -5 -S localhost:7072 %h %p
+```
+另外需要安装软件包 connect-proxy:
+```bash
+sudo apt-get install connect-proxy
 ```

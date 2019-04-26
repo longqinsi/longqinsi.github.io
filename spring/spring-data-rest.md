@@ -1,7 +1,9 @@
 # [技术备忘录](../README.md) | [Spring](README.md) | Spring Data Rest
 ## 目录
   1. [各种HTTP方法操作成功的响应的HTTP状态码是多少？](#success-response-status-code-of-http-methods)
-  1. [PUT,PUT和PATCH操作的区别是什么？](#difference-between-put-and-patch)
+  2. [PUT和PATCH操作的区别是什么？](#difference-between-put-and-patch)
+  3. [如何更新外键关系？](#update-foreign-key-association)
+  4. [如何删除外键关系？](#delete-foreign-key-assaciation)
   
 ## 问题
 ### 1.各种HTTP方法操作成功的响应的HTTP状态码是多少？<a name="success-response-status-code-of-http-methods"></a>[↑](#top)
@@ -34,6 +36,7 @@ PUT是更新实体的所有字段，所以在请求报文问题中需要包含�
       "averageYearlySales": 9000000
    }
    ```
+
 ### 3.如何更新外键关系？<a name="update-foreign-key-association"></a>[↑](#top)
 下面的json发送到http://localhost:8080/api/models/1/modelType，HTTP方法为PUT,Content-Type为application/json，用于改变model的modelType
    ```json
@@ -46,5 +49,6 @@ PUT是更新实体的所有字段，所以在请求报文问题中需要包含�
       }
    }
    ```
-### 4.如何删除外键关系？<a name="delete-foreign-key-assaciation></a>[↑](#top)
+
+### 4.如何删除外键关系？<a name="delete-foreign-key-assaciation"></a>[↑](#top)
 发送请求到http://localhost:8080/api/models/1/modelType，HTTP方法为DELETE，请求体为空，即可删除对应model的modelType

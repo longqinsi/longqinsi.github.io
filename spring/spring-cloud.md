@@ -1,4 +1,4 @@
-# [技术备忘录](../README.md) | Spring Cloud
+# [技术备忘录](../README.md) | [Spring](README.md) | Spring Cloud
 ## 目录
   1. [Spring Cloud的主要功能](#spring-cloud-functions)
   2. [课程的faq地址](course-faq-url)
